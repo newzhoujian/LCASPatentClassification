@@ -47,9 +47,9 @@ with tf.device('/gpu:0'):
     attention_mul = Dropout(0.5)(attention_mul)
     
     convs = []
-    filter_size = [2, 3, 4, 5]
+    filter_size = [7, 8, 9]
     for i in filter_size:
-        conv_layer = Conv1D(filters=300, kernel_size=i)(attention_mul)
+        conv_layer = Conv1D(filters=312, kernel_size=i)(attention_mul)
         conv_layer = BatchNormalization()(conv_layer)
         conv_layer = Activation('relu')(conv_layer)
         pool_layer = MaxPooling1D(200-i+1,1)(conv_layer)
@@ -63,7 +63,7 @@ with tf.device('/gpu:0'):
     model.summary()
     checkpoint = ModelCheckpoint('../../PCmodel/Word2VecBiGRUATTTextCNN.h5', monitor='val_categorical_accuracy', verbose=1, save_best_only=True, mode='max')
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['categorical_accuracy'])
-    history = model.fit(X_train, y_train, batch_size=200, epochs=20, validation_data=[X_val, y_val], callbacks=[checkpoint])
+    history = model.fit(X_train, y_train, batch_size=200, epochs=15, validation_data=[X_val, y_val], callbacks=[checkpoint])
     model.save('../../PCmodel/Word2VecBiGRUATTTextCNN.h5')
     y_pred = model.predict(X_test)
 
